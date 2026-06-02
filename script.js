@@ -7,7 +7,7 @@
   const $ = (s, c = document) => c.querySelector(s);
   const $$ = (s, c = document) => [...c.querySelectorAll(s)];
 
-  const CONTRACT = "SHIBEUS000ComingSoon000VeniVidiHODL000Maximus";
+  const CONTRACT = "D6u44BYArAHF4zqEpq2T4VCuLSHR3bKXnZfvoDjmpump";
 
   /* ---- Year ---- */
   const yr = $("#year");
