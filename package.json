@@ -1,0 +1,12 @@
+{
+  "name": "shibeus-maximus",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Shibeus Maximus — meme empire site, holder gate, trivia-to-earn and hourly raffle.",
+  "dependencies": {
+    "@solana/spl-token": "^0.4.9",
+    "@solana/web3.js": "^1.95.4",
+    "@vercel/kv": "^3.0.0",
+    "bs58": "^6.0.0"
+  }
+}
