@@ -1,0 +1,157 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>The Arena — Shibeus Maximus</title>
+  <meta name="description" content="Enter the Arena. Hold 50,000+ $SHIBEUS, earn tokens every 5 minutes in trivia rounds, and chase the hourly raffle. No wallet connect." />
+  <meta name="theme-color" content="#0b0a06" />
+
+  <!-- Open Graph / social -->
+  <meta property="og:title" content="The Arena — Shibeus Maximus" />
+  <meta property="og:description" content="Battle for tribute. Earn $SHIBEUS in the Arena." />
+  <meta property="og:image" content="assets/banner.jpg" />
+  <meta property="og:type" content="website" />
+  <meta name="twitter:card" content="summary_large_image" />
+
+  <link rel="icon" type="image/png" href="assets/shibeus.png" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@500;700;900&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="styles.css" />
+</head>
+<body id="top">
+  <!-- Decorative animated background -->
+  <div class="bg-grain" aria-hidden="true"></div>
+  <div class="bg-glow" aria-hidden="true"></div>
+
+  <!-- NAV -->
+  <header class="nav" id="nav">
+    <a class="nav__brand" href="index.html">
+      <img src="assets/shibeus.png" alt="Shibeus Maximus coin" class="nav__coin" />
+      <span>SHIBEUS<em>MAXIMUS</em></span>
+    </a>
+    <nav class="nav__links" aria-label="Primary">
+      <a href="index.html#about">The Empire</a>
+      <a href="index.html#tokenomics">Tokenomics</a>
+      <a href="arena.html" class="active" aria-current="page">Arena</a>
+      <a href="index.html#buy">How to Buy</a>
+      <a href="index.html#roadmap">Conquest</a>
+      <a href="index.html#gallery">Chronicles</a>
+      <a href="index.html#memes">Meme Forge</a>
+    </nav>
+    <a href="index.html#buy" class="btn btn--gold nav__cta">Buy $SHIBEUS</a>
+    <button class="nav__burger" aria-label="Open menu" id="burger">
+      <span></span><span></span><span></span>
+    </button>
+  </header>
+
+  <!-- THE ARENA: earn + raffle -->
+  <section class="section arena arena-page" id="arena">
+    <div class="container">
+      <div class="section-head reveal">
+        <p class="kicker"><a href="index.html" class="back-link">← The Empire</a> · The Arena</p>
+        <h2>Battle for <span class="gold">Tribute</span></h2>
+        <p class="muted">No wallet connect. Prove you hold 50,000+ $SHIBEUS, then earn tokens every 5 minutes and chase the hourly raffle.</p>
+      </div>
+
+      <!-- GATE -->
+      <div class="arena-gate reveal" id="arenaGate">
+        <div class="gate-card">
+          <div class="gate-coin"><img src="assets/shibeus.png" alt="" /></div>
+          <h3>Enter the Arena</h3>
+          <p class="muted">Paste a Solana wallet holding at least <b>50,000 $SHIBEUS</b>. It's a read-only check — your keys never leave your wallet. All rewards are credited to this exact address.</p>
+          <div class="gate-input">
+            <input id="gateAddress" type="text" placeholder="Your Solana wallet address" spellcheck="false" autocomplete="off" />
+            <button class="btn btn--gold" id="gateBtn">Verify &amp; Enter</button>
+          </div>
+          <p class="gate-status" id="gateStatus"></p>
+        </div>
+      </div>
+
+      <!-- GAME -->
+      <div class="arena-game" id="arenaGame" hidden>
+        <div class="arena-bar reveal">
+          <div class="abar-item"><span>Soldier</span><b id="playerAddr">—</b></div>
+          <div class="abar-item"><span>Holdings</span><b id="playerBal">—</b></div>
+          <div class="abar-item"><span>Your Points</span><b id="playerPoints">0</b></div>
+          <div class="abar-item"><span>Claimable</span><b id="playerClaim">0 $SHIBEUS</b></div>
+          <button class="btn btn--ghost btn--sm" id="logoutBtn">Switch wallet</button>
+        </div>
+
+        <div class="arena-grid">
+          <!-- TRIVIA -->
+          <div class="panel trivia reveal">
+            <div class="panel-head">
+              <h3>⚔ Trivia Rounds</h3>
+              <div class="round-meta">
+                <span>Pool: <b id="poolLeft">10,000</b> pts</span>
+                <span class="round-timer" id="roundTimer">05:00</span>
+              </div>
+            </div>
+            <div class="pool-bar"><i id="poolBar"></i></div>
+            <div class="quiz" id="quiz">
+              <p class="quiz-q" id="quizQ">Loading question…</p>
+              <div class="quiz-opts" id="quizOpts"></div>
+              <p class="quiz-feedback" id="quizFeedback"></p>
+            </div>
+            <p class="econ-note">1,000 points = 100 $SHIBEUS · 1,000 $SHIBEUS shared every 5-minute round</p>
+          </div>
+
+          <!-- RAFFLE + CLAIM -->
+          <div class="panel-col">
+            <div class="panel raffle reveal">
+              <div class="panel-head"><h3>🏆 Hourly Raffle</h3><span class="raffle-timer" id="raffleTimer">59:59</span></div>
+              <p class="muted">One random warrior takes the <b>entire pot</b>. Entry adds <b id="raffleCost">1,000</b> $SHIBEUS to the prize.</p>
+              <button class="btn btn--gold" id="raffleBtn">Enter Raffle</button>
+              <div class="raffle-winners">
+                <span>Last champions</span>
+                <ul id="raffleWinners"><li class="muted">No draws yet — be the first.</li></ul>
+              </div>
+            </div>
+            <div class="panel claim reveal">
+              <div class="panel-head"><h3>💰 Claim Tribute</h3></div>
+              <p class="muted">Convert points to $SHIBEUS, sent straight to your verified address.</p>
+              <button class="btn btn--gold" id="claimBtn" disabled>Claim <span id="claimAmt">0</span> $SHIBEUS</button>
+              <p class="claim-status" id="claimStatus"></p>
+            </div>
+          </div>
+        </div>
+        <p class="beta-tag">⚠ BETA — points are being recorded now. On-chain claims &amp; raffle payouts activate at official launch.</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- FOOTER -->
+  <footer class="footer">
+    <div class="container footer__inner">
+      <div class="footer__brand">
+        <img src="assets/shibeus.png" alt="" />
+        <span>SHIBEUS MAXIMUS</span>
+      </div>
+      <p class="footer__disclaimer">
+        $SHIBEUS is a meme coin with no intrinsic value or expectation of financial
+        return. It is for entertainment purposes only. Not financial advice. DYOR.
+      </p>
+      <p class="footer__copy">© <span id="year">2026</span> The Shibeus Empire. Veni. Vidi. HODL.</p>
+    </div>
+  </footer>
+
+  <!-- minimal page chrome: nav shadow on scroll, burger, reveal-on-scroll, year -->
+  <script>
+    (function () {
+      const nav = document.getElementById("nav");
+      addEventListener("scroll", () => nav.classList.toggle("scrolled", scrollY > 12), { passive: true });
+      const burger = document.getElementById("burger");
+      const links = document.querySelector(".nav__links");
+      burger && burger.addEventListener("click", () => links.classList.toggle("open"));
+      const io = new IntersectionObserver((entries) => {
+        entries.forEach((e) => { if (e.isIntersecting) { e.target.classList.add("in"); io.unobserve(e.target); } });
+      }, { threshold: 0.12 });
+      document.querySelectorAll(".reveal").forEach((el, i) => { el.style.transitionDelay = (i % 6) * 60 + "ms"; io.observe(el); });
+      const y = document.getElementById("year"); if (y) y.textContent = new Date().getFullYear();
+    })();
+  </script>
+  <script src="game.js"></script>
+</body>
+</html>

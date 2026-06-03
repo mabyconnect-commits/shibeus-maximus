@@ -462,6 +462,30 @@ h3 { font-size: 1.25rem; }
 
 @media (max-width: 860px) { .arena-grid { grid-template-columns: 1fr; } }
 
+.arena-page { padding-top: calc(var(--nav-h, 76px) + 2.5rem); }
+.back-link { color: var(--muted); text-decoration: none; }
+.back-link:hover { color: var(--gold); }
+.nav__links a.active { color: var(--gold); }
+
+/* Arena teaser on landing */
+.arena-teaser {
+  display: flex; align-items: center; gap: 2rem; flex-wrap: wrap;
+  background: linear-gradient(120deg, var(--panel-2), var(--panel));
+  border: 1px solid var(--line); border-radius: 22px; padding: clamp(1.6rem, 4vw, 2.6rem);
+  position: relative; overflow: hidden;
+}
+.arena-teaser::before {
+  content: ""; position: absolute; inset: 0;
+  background: radial-gradient(600px 200px at 100% 0%, rgba(95, 224, 106, 0.12), transparent 60%);
+  pointer-events: none;
+}
+.arena-teaser__body { flex: 1; min-width: 260px; position: relative; }
+.arena-teaser__body h2 { font-size: clamp(1.6rem, 4vw, 2.4rem); margin: 0.3rem 0 0.6rem; }
+.arena-teaser__body .btn { margin-top: 1.2rem; }
+.arena-teaser__coin { width: clamp(110px, 22vw, 170px); flex-shrink: 0; }
+.arena-teaser__coin img { border-radius: 50%; box-shadow: 0 0 40px rgba(232, 192, 105, 0.45); animation: floatY 5s ease-in-out infinite; }
+@media (max-width: 620px) { .arena-teaser__coin { display: none; } }
+
 /* ---------- Meme Forge ---------- */
 .forge {
   display: grid;

@@ -34,7 +34,7 @@
     <nav class="nav__links" aria-label="Primary">
       <a href="#about">The Empire</a>
       <a href="#tokenomics">Tokenomics</a>
-      <a href="#arena">Arena</a>
+      <a href="arena.html">Arena</a>
       <a href="#buy">How to Buy</a>
       <a href="#roadmap">Conquest</a>
       <a href="#gallery">Chronicles</a>
@@ -207,78 +207,17 @@
     </div>
   </section>
 
-  <!-- THE ARENA: earn + raffle -->
-  <section class="section arena" id="arena">
+  <!-- ARENA TEASER -->
+  <section class="section arena-teaser-sec">
     <div class="container">
-      <div class="section-head reveal">
-        <p class="kicker">The Arena</p>
-        <h2>Battle for <span class="gold">Tribute</span></h2>
-        <p class="muted">No wallet connect. Prove you hold 50,000+ $SHIBEUS, then earn tokens every 5 minutes and chase the hourly raffle.</p>
-      </div>
-
-      <!-- GATE -->
-      <div class="arena-gate reveal" id="arenaGate">
-        <div class="gate-card">
-          <div class="gate-coin"><img src="assets/shibeus.png" alt="" /></div>
-          <h3>Enter the Arena</h3>
-          <p class="muted">Paste a Solana wallet holding at least <b>50,000 $SHIBEUS</b>. It's a read-only check — your keys never leave your wallet. All rewards are credited to this exact address.</p>
-          <div class="gate-input">
-            <input id="gateAddress" type="text" placeholder="Your Solana wallet address" spellcheck="false" autocomplete="off" />
-            <button class="btn btn--gold" id="gateBtn">Verify &amp; Enter</button>
-          </div>
-          <p class="gate-status" id="gateStatus"></p>
+      <div class="arena-teaser reveal">
+        <div class="arena-teaser__body">
+          <p class="kicker">The Arena</p>
+          <h2>Earn $SHIBEUS in <span class="gold">battle</span>.</h2>
+          <p class="muted">Hold 50,000+ $SHIBEUS and enter the Arena — win tokens every 5 minutes in trivia rounds, then chase the hourly raffle. No wallet connect required.</p>
+          <a href="arena.html" class="btn btn--gold">Enter the Arena →</a>
         </div>
-      </div>
-
-      <!-- GAME -->
-      <div class="arena-game" id="arenaGame" hidden>
-        <div class="arena-bar reveal">
-          <div class="abar-item"><span>Soldier</span><b id="playerAddr">—</b></div>
-          <div class="abar-item"><span>Holdings</span><b id="playerBal">—</b></div>
-          <div class="abar-item"><span>Your Points</span><b id="playerPoints">0</b></div>
-          <div class="abar-item"><span>Claimable</span><b id="playerClaim">0 $SHIBEUS</b></div>
-          <button class="btn btn--ghost btn--sm" id="logoutBtn">Switch wallet</button>
-        </div>
-
-        <div class="arena-grid">
-          <!-- TRIVIA -->
-          <div class="panel trivia reveal">
-            <div class="panel-head">
-              <h3>⚔ Trivia Rounds</h3>
-              <div class="round-meta">
-                <span>Pool: <b id="poolLeft">10,000</b> pts</span>
-                <span class="round-timer" id="roundTimer">05:00</span>
-              </div>
-            </div>
-            <div class="pool-bar"><i id="poolBar"></i></div>
-            <div class="quiz" id="quiz">
-              <p class="quiz-q" id="quizQ">Loading question…</p>
-              <div class="quiz-opts" id="quizOpts"></div>
-              <p class="quiz-feedback" id="quizFeedback"></p>
-            </div>
-            <p class="econ-note">1,000 points = 100 $SHIBEUS · 1,000 $SHIBEUS shared every 5-minute round</p>
-          </div>
-
-          <!-- RAFFLE + CLAIM -->
-          <div class="panel-col">
-            <div class="panel raffle reveal">
-              <div class="panel-head"><h3>🏆 Hourly Raffle</h3><span class="raffle-timer" id="raffleTimer">59:59</span></div>
-              <p class="muted">One random warrior takes the <b>entire pot</b>. Entry adds <b id="raffleCost">1,000</b> $SHIBEUS to the prize.</p>
-              <button class="btn btn--gold" id="raffleBtn">Enter Raffle</button>
-              <div class="raffle-winners">
-                <span>Last champions</span>
-                <ul id="raffleWinners"><li class="muted">No draws yet — be the first.</li></ul>
-              </div>
-            </div>
-            <div class="panel claim reveal">
-              <div class="panel-head"><h3>💰 Claim Tribute</h3></div>
-              <p class="muted">Convert points to $SHIBEUS, sent straight to your verified address.</p>
-              <button class="btn btn--gold" id="claimBtn" disabled>Claim <span id="claimAmt">0</span> $SHIBEUS</button>
-              <p class="claim-status" id="claimStatus"></p>
-            </div>
-          </div>
-        </div>
-        <p class="beta-tag">⚠ BETA — points are being recorded now. On-chain claims &amp; raffle payouts activate at official launch.</p>
+        <div class="arena-teaser__coin"><img src="assets/shibeus.png" alt="" /></div>
       </div>
     </div>
   </section>
@@ -491,6 +430,5 @@
   </a>
 
   <script src="script.js"></script>
-  <script src="game.js"></script>
 </body>
 </html>
