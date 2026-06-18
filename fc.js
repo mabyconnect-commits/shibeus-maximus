@@ -33,7 +33,7 @@
 
   /* ---- Elements ------------------------------------------ */
   const el = {};
-  ["connectCard","connectBtn","connectMsg","walletCard","walletHandle","accountBtn","creditBal","modePill","netToggle",
+  ["connectCard","connectBtn","connectSolflareBtn","connectMsg","walletCard","walletHandle","accountBtn","creditBal","modePill","netToggle",
    "sideGoal","sideMiss","sentGoal","sentMiss","betInput","zoneInput","zonebet","zbSwitch","zbPick","zones",
    "totalBet","toWin","kickBtn","betMsg","stShots","stWinRate","stStreak","stWagered","stPnl","stBest","feed",
    "keeper","ball","flash","flashText","flashSub","howBtn","lbBtn","obBack","accBack","lbBack","proofBack",
@@ -84,7 +84,7 @@
       const c = await this.post("/api/fc-challenge", {});
       if (!c.ok) throw new Error(c.error || "challenge_failed");
       const signed = await provider.signMessage(new TextEncoder().encode(c.message), "utf8");
-      const sigBytes = signed.signature || signed; // Phantom returns { signature }
+      const sigBytes = signed.signature || signed; // Phantom returns { signature }; Solflare a raw Uint8Array
       const signature = b58encode(sigBytes);
       const d = await this.post("/api/fc-login", { nonce: c.nonce, signature });
       if (!d.ok) throw new Error(d.error || "login_failed");
@@ -140,23 +140,48 @@
   /* ============================================================
      WALLET
      ============================================================ */
-  const getProvider = () =>
-    (window.phantom?.solana?.isPhantom && window.phantom.solana) ||
-    (window.solana?.isPhantom && window.solana) || null;
+  // Supported wallets — both expose a Phantom-style provider API
+  // (connect / signMessage / on). We pick by name so the player can choose.
+  const WALLETS = {
+    phantom: {
+      label: "Phantom", install: "https://phantom.app/",
+      detect: () =>
+        (window.phantom?.solana?.isPhantom && window.phantom.solana) ||
+        (window.solana?.isPhantom && window.solana) || null,
+    },
+    solflare: {
+      label: "Solflare", install: "https://solflare.com/",
+      detect: () =>
+        (window.solflare?.isSolflare && window.solflare) ||
+        (window.solflare ? window.solflare : null),
+    },
+  };
 
-  async function connect(eager = false) {
-    provider = getProvider();
-    if (!provider) {
-      el.connectMsg.innerHTML = 'Phantom not found. <a class="linkish" href="https://phantom.app/" target="_blank" rel="noopener">Install Phantom ↗</a>';
+  async function connect(walletName = "phantom", eager = false) {
+    const w = WALLETS[walletName] || WALLETS.phantom;
+    const p = w.detect();
+    if (!p) {
+      el.connectMsg.innerHTML = `${w.label} not found. <a class="linkish" href="${w.install}" target="_blank" rel="noopener">Install ${w.label} ↗</a>`;
       el.connectMsg.className = "bet-msg err"; return;
     }
+    provider = p;
     try {
-      el.connectMsg.textContent = "Opening Phantom…"; el.connectMsg.className = "bet-msg";
+      el.connectMsg.textContent = `Opening ${w.label}…`; el.connectMsg.className = "bet-msg";
       const resp = await provider.connect(eager ? { onlyIfTrusted: true } : {});
-      address = resp.publicKey.toString();
+      // Phantom returns { publicKey }; Solflare resolves then exposes provider.publicKey.
+      const pk = (resp && resp.publicKey) || provider.publicKey;
+      if (!pk) throw new Error("no_pubkey");
+      address = pk.toString();
       await onConnected();
     } catch (e) {
       if (!eager) { el.connectMsg.textContent = "Connection cancelled."; el.connectMsg.className = "bet-msg err"; }
+    }
+  }
+
+  // On load, silently reconnect whichever supported wallet already trusts us.
+  async function eagerConnect() {
+    for (const name of Object.keys(WALLETS)) {
+      if (WALLETS[name].detect()) { await connect(name, true); if (address) return; }
     }
   }
 
@@ -572,7 +597,8 @@
   /* ============================================================
      WIRE UP
      ============================================================ */
-  el.connectBtn.addEventListener("click", () => connect(false));
+  el.connectBtn.addEventListener("click", () => connect("phantom", false));
+  el.connectSolflareBtn && el.connectSolflareBtn.addEventListener("click", () => connect("solflare", false));
   $$("#netToggle button").forEach((b) => b.addEventListener("click", () => switchNetwork(b.dataset.net)));
   el.sideGoal.addEventListener("click", () => selectSide("goal"));
   el.sideMiss.addEventListener("click", () => selectSide("miss"));
@@ -598,5 +624,5 @@
 
   renderReadout();
   renderSentiment();
-  setTimeout(() => connect(true), 300);
+  setTimeout(() => eagerConnect(), 300);
 })();

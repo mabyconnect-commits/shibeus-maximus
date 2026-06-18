@@ -314,6 +314,10 @@
 .btn--lime:hover { transform: translateY(-2px); box-shadow: 0 14px 34px -8px rgba(150, 230, 0, 0.55); }
 .btn--lime:disabled { opacity: 0.5; cursor: not-allowed; transform: none; box-shadow: none; }
 
+.btn--solflare { background: linear-gradient(180deg, #ffd23f, #fc7227 55%, #e85a17); color: #2a1500; border-color: transparent; }
+.btn--solflare:hover { transform: translateY(-2px); box-shadow: 0 14px 34px -8px rgba(252, 114, 39, 0.55); }
+.btn--solflare:disabled { opacity: 0.5; cursor: not-allowed; transform: none; box-shadow: none; }
+
 .mode-pill { font-family: var(--font-display); font-weight: 700; font-size: 0.62rem; letter-spacing: 0.08em; padding: 0.25rem 0.6rem; border-radius: 999px; border: 1px solid var(--line); }
 .mode-pill.beta { color: var(--gold); background: rgba(232, 192, 105, 0.1); }
 .mode-pill.live { color: var(--goal-green); background: rgba(182, 255, 46, 0.14); border-color: rgba(182, 255, 46, 0.4); }
