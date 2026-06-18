@@ -19,13 +19,22 @@ landing page for the immortal meme empire.
 - **⚒️ Meme Forge** — an in-browser meme generator: pick a Shibeus scene,
   add top/bottom war cries, stamp your **X handle**, and download a ready-to-post
   1200×675 X-post image — plus a one-click "Share to X" button.
-- **⚽ Shibeus FC** (`fc.html`) — a degen **penalty-kick betting game** in the style
-  of degenfc.fun. **Connect Phantom** (real, read-only), call your shot — **GOAL**
-  or **MISS** — pick an aim, and take the penalty against the emperor's keeper.
-  Live odds, payout multipliers, animated CSS/SVG stadium, session stats, shot
-  history, and a **provably-fair** outcome (`HMAC-SHA256(serverSeed, clientSeed:nonce)`)
-  with seed rotation/verify. Runs on free **arena credits** in BETA; on-chain SOL
-  wagering activates server-side at launch (see `SETUP.md`).
+- **⚽ Shibeus FC** (`fc.html`) — a degen **penalty-kick betting game** modeled on
+  degenfc.fun. **Connect Phantom** (real, read-only), then each round:
+  - **GOAL or MISS** main bet, paying **×1.98**.
+  - Optional **ZONE bet** — call the exact corner on a GOAL pick for up to **×9.90**
+    (a separate stake riding on the same shot).
+  - **Provably-fair** engine: every outcome is committed as
+    `HMAC-SHA256(serverSeed, clientSeed:nonce)` before reveal, with a per-shot
+    **proof** view and **rotate-and-reveal** seed verification.
+  - **Account** modal (custodial-style): Profile (display handle, balance, log out),
+    Deposit (address/QR + demo-credit grant), Withdraw — deposits/withdrawals are
+    clearly gated to launch so no real SOL can be sent in BETA.
+  - **Leaderboard** (Profit / Wagered), live **GOAL/MISS sentiment** bar, animated
+    CSS/SVG stadium with a 5-zone target grid, session stats, shot-history feed,
+    and a first-run onboarding carousel.
+  Runs on free **arena credits** in BETA; on-chain SOL deposits/withdrawals/payouts
+  activate server-side at launch (see `SETUP.md`).
 - Fully **responsive**, with reduced-motion support and SEO/Open-Graph tags.
 
 ## 🚀 Run it
