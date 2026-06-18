@@ -19,6 +19,13 @@ landing page for the immortal meme empire.
 - **⚒️ Meme Forge** — an in-browser meme generator: pick a Shibeus scene,
   add top/bottom war cries, stamp your **X handle**, and download a ready-to-post
   1200×675 X-post image — plus a one-click "Share to X" button.
+- **⚽ Shibeus FC** (`fc.html`) — a degen **penalty-kick betting game** in the style
+  of degenfc.fun. **Connect Phantom** (real, read-only), call your shot — **GOAL**
+  or **MISS** — pick an aim, and take the penalty against the emperor's keeper.
+  Live odds, payout multipliers, animated CSS/SVG stadium, session stats, shot
+  history, and a **provably-fair** outcome (`HMAC-SHA256(serverSeed, clientSeed:nonce)`)
+  with seed rotation/verify. Runs on free **arena credits** in BETA; on-chain SOL
+  wagering activates server-side at launch (see `SETUP.md`).
 - Fully **responsive**, with reduced-motion support and SEO/Open-Graph tags.
 
 ## 🚀 Run it
@@ -39,8 +46,14 @@ python3 -m http.server 8000
 ```
 .
 ├── index.html        # markup
+├── arena.html        # holder gate · trivia-to-earn · raffle
+├── fc.html           # Shibeus FC — penalty betting game
 ├── styles.css        # imperial gold + emerald theme
+├── fc.css            # Shibeus FC stadium + betting console
 ├── script.js         # nav, reveals, lightbox, meme generator
+├── game.js           # arena logic
+├── fc.js             # Shibeus FC: Phantom connect, odds, provably-fair
+├── api/              # serverless: verify-holder, claim, raffle
 └── assets/
     ├── shibeus.png   # the coin / logo
     ├── banner.jpg    # legion hero banner

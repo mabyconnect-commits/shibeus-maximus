@@ -1,0 +1,305 @@
+/* ============================================================
+   SHIBEUS FC — Degen Penalty Arena
+   Stadium scene + betting console. Built on the imperial theme
+   tokens from styles.css (load that first, then this).
+   ============================================================ */
+
+:root {
+  --pitch-1: #0e3a1f;
+  --pitch-2: #0a2c18;
+  --pitch-line: rgba(233, 247, 233, 0.55);
+  --night-1: #0a1326;
+  --night-2: #0c1a14;
+  --goal-green: #b6ff2e;
+  --miss-red: #ff3b46;
+}
+
+/* ---------- Layout ---------- */
+.fc-page { padding-top: clamp(88px, 12vw, 120px); padding-bottom: clamp(56px, 8vw, 96px); }
+
+.fc-head { text-align: center; max-width: 720px; margin: 0 auto clamp(24px, 4vw, 40px); }
+.fc-head h1 {
+  font-size: clamp(2.2rem, 6vw, 3.6rem);
+  letter-spacing: 0.02em;
+}
+.fc-head .fc-green { color: var(--goal-green); }
+
+.fc-wrap {
+  display: grid;
+  grid-template-columns: 1.55fr 1fr;
+  gap: clamp(18px, 2.4vw, 28px);
+  align-items: start;
+}
+@media (max-width: 960px) { .fc-wrap { grid-template-columns: 1fr; } }
+
+/* ---------- Top status strip ---------- */
+.fc-strip {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+  justify-content: center;
+  margin-bottom: clamp(18px, 3vw, 26px);
+}
+.fc-pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.55rem;
+  border: 1px solid var(--line);
+  background: linear-gradient(180deg, rgba(255, 255, 255, 0.04), rgba(0, 0, 0, 0.25));
+  border-radius: 999px;
+  padding: 0.5rem 1rem;
+  font-size: 0.86rem;
+}
+.fc-pill b { font-family: var(--font-display); }
+.fc-pill .dot { width: 8px; height: 8px; border-radius: 50%; background: var(--muted); }
+.fc-pill .dot.live { background: var(--goal-green); box-shadow: 0 0 10px var(--goal-green); animation: fcPulse 1.4s infinite; }
+@keyframes fcPulse { 0%,100% { opacity: 1; } 50% { opacity: 0.35; } }
+
+.odds-pill { padding: 0; overflow: hidden; border: 0; }
+.odds-pill span {
+  display: inline-flex; align-items: center; gap: 0.4rem;
+  padding: 0.5rem 1rem; font-weight: 700; font-family: var(--font-display);
+  letter-spacing: 0.04em;
+}
+.odds-pill .o-goal { background: rgba(182, 255, 46, 0.16); color: var(--goal-green); }
+.odds-pill .o-miss { background: rgba(255, 59, 70, 0.16); color: var(--miss-red); }
+
+/* ============================================================
+   STADIUM
+   ============================================================ */
+.stadium {
+  position: relative;
+  border-radius: 20px;
+  overflow: hidden;
+  border: 1px solid var(--line);
+  box-shadow: var(--shadow);
+  aspect-ratio: 4 / 5;
+  max-height: 78vh;
+  background:
+    radial-gradient(120% 60% at 50% -10%, rgba(95, 224, 106, 0.10), transparent 55%),
+    linear-gradient(180deg, var(--night-1) 0%, #0b1a2c 32%, var(--night-2) 46%, var(--pitch-2) 100%);
+}
+
+/* floating crowd dust / particles */
+.stadium .stars { position: absolute; inset: 0; pointer-events: none; }
+.stadium .star {
+  position: absolute; width: 3px; height: 3px; border-radius: 50%;
+  background: rgba(255, 255, 255, 0.6);
+  animation: fcFloat linear infinite;
+}
+@keyframes fcFloat {
+  from { transform: translateY(0); opacity: 0; }
+  10% { opacity: 0.8; }
+  90% { opacity: 0.8; }
+  to { transform: translateY(-26px); opacity: 0; }
+}
+
+/* perspective pitch */
+.pitch {
+  position: absolute;
+  left: 0; right: 0; bottom: 0;
+  height: 56%;
+  background:
+    repeating-linear-gradient(180deg, var(--pitch-1) 0 22px, var(--pitch-2) 22px 44px);
+  transform: perspective(620px) rotateX(46deg);
+  transform-origin: bottom center;
+}
+.pitch::before { /* penalty arc */
+  content: ""; position: absolute; left: 50%; top: 8%;
+  width: 56%; height: 60%; transform: translateX(-50%);
+  border: 2px solid var(--pitch-line); border-radius: 50%;
+  clip-path: inset(0 0 55% 0);
+  opacity: 0.5;
+}
+.pitch::after { /* penalty box */
+  content: ""; position: absolute; left: 50%; top: -2%;
+  width: 72%; height: 46%; transform: translateX(-50%);
+  border: 2px solid var(--pitch-line); border-top: 0;
+  opacity: 0.45;
+}
+
+/* the goal */
+.goal {
+  position: absolute;
+  top: 16%; left: 50%; transform: translateX(-50%);
+  width: 70%; aspect-ratio: 16 / 9;
+  border: 7px solid #f4f4f4;
+  border-bottom: 0;
+  border-radius: 6px 6px 0 0;
+  box-shadow: 0 0 22px rgba(255, 255, 255, 0.25);
+  background:
+    linear-gradient(90deg, rgba(255, 255, 255, 0.05) 1px, transparent 1px) 0 0 / 22px 22px,
+    linear-gradient(180deg, rgba(255, 255, 255, 0.05) 1px, transparent 1px) 0 0 / 22px 22px;
+}
+.goal .post-glow { position: absolute; inset: -3px; border-radius: inherit; pointer-events: none; }
+
+/* keeper */
+.keeper {
+  position: absolute;
+  left: 50%; top: 30%;
+  width: 20%;
+  transform: translate(-50%, 0);
+  transition: transform 0.45s cubic-bezier(.34,1.56,.64,1);
+  filter: drop-shadow(0 8px 14px rgba(0,0,0,0.5));
+  z-index: 3;
+}
+.keeper.dive-left { transform: translate(-180%, 8%) rotate(-22deg); }
+.keeper.dive-right { transform: translate(80%, 8%) rotate(22deg); }
+.keeper.dive-center { transform: translate(-50%, -6%) scale(1.05); }
+.keeper svg { width: 100%; height: auto; display: block; }
+
+/* the ball */
+.ball {
+  position: absolute;
+  left: 50%; bottom: 9%;
+  width: 9%;
+  transform: translate(-50%, 0);
+  z-index: 4;
+  transition: none;
+  filter: drop-shadow(0 6px 8px rgba(0,0,0,0.5));
+}
+.ball svg { width: 100%; height: auto; animation: none; }
+.ball.spin svg { animation: fcSpin 0.5s linear infinite; }
+@keyframes fcSpin { to { transform: rotate(360deg); } }
+
+/* flash overlays */
+.scene-flash {
+  position: absolute; inset: 0; z-index: 6; pointer-events: none;
+  display: grid; place-items: center; opacity: 0; transition: opacity 0.25s;
+}
+.scene-flash.show { opacity: 1; }
+.scene-flash b {
+  font-family: var(--font-display); font-weight: 900;
+  font-size: clamp(2.4rem, 9vw, 5rem); letter-spacing: 0.05em;
+  transform: scale(0.7); transition: transform 0.35s cubic-bezier(.34,1.56,.64,1);
+}
+.scene-flash.show b { transform: scale(1); }
+.scene-flash.goal { background: radial-gradient(circle, rgba(182,255,46,0.22), transparent 60%); }
+.scene-flash.goal b { color: var(--goal-green); text-shadow: 0 0 30px rgba(182,255,46,0.8); }
+.scene-flash.miss { background: radial-gradient(circle, rgba(255,59,70,0.22), transparent 60%); }
+.scene-flash.miss b { color: var(--miss-red); text-shadow: 0 0 30px rgba(255,59,70,0.7); }
+
+/* aim targets */
+.aim-row {
+  position: absolute; left: 0; right: 0; bottom: 4%;
+  display: flex; justify-content: center; gap: 6%;
+  z-index: 5;
+}
+.aim {
+  width: 22%; max-width: 120px; aspect-ratio: 5 / 4;
+  border-radius: 12px;
+  border: 2px solid rgba(255,255,255,0.25);
+  background: rgba(255,255,255,0.04);
+  display: grid; place-items: center;
+  cursor: pointer; transition: transform 0.18s, border-color 0.18s, background 0.18s;
+  font-size: 1.6rem;
+}
+.aim:hover { transform: translateY(-3px); border-color: rgba(255,255,255,0.6); }
+.aim.sel { border-color: var(--goal-green); background: rgba(182,255,46,0.14); box-shadow: 0 0 18px rgba(182,255,46,0.4); }
+.aim small { display: block; font-size: 0.6rem; letter-spacing: 0.18em; color: var(--muted); margin-top: 2px; }
+
+/* ============================================================
+   BETTING CONSOLE
+   ============================================================ */
+.console { display: grid; gap: 16px; }
+
+.card {
+  border: 1px solid var(--line);
+  background: linear-gradient(180deg, var(--panel-2), var(--panel));
+  border-radius: var(--radius);
+  padding: clamp(16px, 2vw, 22px);
+}
+.card h3 { display: flex; align-items: center; gap: 0.5rem; margin-bottom: 0.9rem; }
+
+/* connect */
+.connect-card { text-align: center; }
+.connect-card p { color: var(--ink-soft); margin: 0.4rem 0 1.1rem; font-size: 0.92rem; }
+.wallet-row { display: flex; align-items: center; justify-content: space-between; gap: 10px; flex-wrap: wrap; }
+.wallet-id { display: flex; align-items: center; gap: 0.5rem; font-weight: 600; }
+.wallet-id .av { width: 26px; height: 26px; border-radius: 50%; background: linear-gradient(135deg, var(--goal-green), var(--emerald-deep)); }
+
+/* pick side */
+.sides { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+.side {
+  border-radius: 14px; padding: 1rem; cursor: pointer; text-align: center;
+  border: 2px solid var(--line); background: rgba(255,255,255,0.02);
+  transition: transform 0.15s, border-color 0.15s, background 0.15s;
+}
+.side:hover { transform: translateY(-2px); }
+.side .big { font-family: var(--font-display); font-weight: 900; font-size: 1.5rem; letter-spacing: 0.06em; }
+.side .pct { font-size: 0.82rem; color: var(--muted); }
+.side .mult { font-size: 0.9rem; font-weight: 700; margin-top: 0.2rem; }
+.side.goal.sel { border-color: var(--goal-green); background: rgba(182,255,46,0.12); }
+.side.goal .big { color: var(--goal-green); }
+.side.miss.sel { border-color: var(--miss-red); background: rgba(255,59,70,0.12); }
+.side.miss .big { color: var(--miss-red); }
+
+/* bet amount */
+.bet-field { display: flex; align-items: center; gap: 10px; margin: 0.4rem 0 0.8rem; }
+.bet-field input {
+  flex: 1; min-width: 0; font-family: var(--font-display); font-weight: 700;
+  font-size: 1.3rem; padding: 0.7rem 0.9rem; border-radius: 12px;
+  border: 1px solid var(--line); background: rgba(0,0,0,0.35); color: var(--ink);
+  outline: none;
+}
+.bet-field input:focus { border-color: var(--gold); }
+.bet-field .cur { font-family: var(--font-display); color: var(--gold); font-weight: 700; }
+.chips { display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 1rem; }
+.chip {
+  border: 1px solid var(--line); background: rgba(255,255,255,0.03); color: var(--ink-soft);
+  border-radius: 999px; padding: 0.4rem 0.8rem; font-size: 0.8rem; font-weight: 600; cursor: pointer;
+  transition: 0.15s;
+}
+.chip:hover { border-color: var(--gold); color: var(--ink); }
+
+/* payout readout */
+.readout { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 1rem; }
+.readout .ro {
+  border: 1px solid var(--line); border-radius: 12px; padding: 0.7rem 0.9rem;
+  background: rgba(0,0,0,0.25);
+}
+.readout .ro span { display: block; font-size: 0.7rem; letter-spacing: 0.16em; text-transform: uppercase; color: var(--muted); }
+.readout .ro b { font-family: var(--font-display); font-size: 1.3rem; }
+.readout .to-win b { color: var(--goal-green); }
+
+.kick-btn { width: 100%; justify-content: center; font-size: 1.05rem; padding: 1.05rem; }
+.kick-btn:disabled { opacity: 0.5; cursor: not-allowed; transform: none; box-shadow: none; }
+
+.bet-msg { text-align: center; min-height: 1.2em; margin-top: 0.7rem; font-size: 0.9rem; }
+.bet-msg.ok { color: var(--goal-green); }
+.bet-msg.err { color: var(--miss-red); }
+
+/* stats */
+.stat-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; }
+.stat-grid .s { text-align: center; border: 1px solid var(--line); border-radius: 12px; padding: 0.7rem 0.4rem; background: rgba(0,0,0,0.2); }
+.stat-grid .s b { display: block; font-family: var(--font-display); font-size: 1.25rem; color: var(--gold); }
+.stat-grid .s span { font-size: 0.66rem; letter-spacing: 0.12em; text-transform: uppercase; color: var(--muted); }
+
+/* history feed */
+.feed { display: grid; gap: 8px; max-height: 240px; overflow-y: auto; }
+.feed-row {
+  display: flex; align-items: center; justify-content: space-between; gap: 8px;
+  border: 1px solid var(--line); border-radius: 10px; padding: 0.5rem 0.7rem;
+  font-size: 0.85rem; background: rgba(0,0,0,0.2);
+  animation: fcSlide 0.3s ease;
+}
+@keyframes fcSlide { from { opacity: 0; transform: translateY(-6px); } to { opacity: 1; transform: none; } }
+.feed-row .tag { font-family: var(--font-display); font-weight: 700; font-size: 0.7rem; padding: 0.15rem 0.5rem; border-radius: 6px; }
+.feed-row .tag.win { background: rgba(182,255,46,0.16); color: var(--goal-green); }
+.feed-row .tag.loss { background: rgba(255,59,70,0.16); color: var(--miss-red); }
+.feed-row .amt.win { color: var(--goal-green); font-weight: 700; }
+.feed-row .amt.loss { color: var(--miss-red); font-weight: 700; }
+.feed-empty { color: var(--muted); text-align: center; padding: 0.6rem; font-size: 0.85rem; }
+
+/* fairness */
+.fair { font-size: 0.82rem; color: var(--muted); }
+.fair code { font-family: ui-monospace, SFMono-Regular, Menlo, monospace; color: var(--ink-soft); word-break: break-all; font-size: 0.76rem; }
+.fair .frow { display: flex; justify-content: space-between; gap: 10px; padding: 0.35rem 0; border-bottom: 1px dashed var(--line); }
+.fair .frow:last-child { border-bottom: 0; }
+.fair-link { color: var(--gold); cursor: pointer; text-decoration: underline; }
+
+.beta-banner {
+  margin-top: 14px; text-align: center; font-size: 0.84rem; color: var(--gold);
+  border: 1px dashed var(--line); border-radius: 12px; padding: 0.7rem 1rem;
+  background: rgba(232,192,105,0.06);
+}
