@@ -13,17 +13,18 @@ module.exports = async (req, res) => {
   try {
     const b = fc.body(req);
     if (!fc.authed(b)) return res.status(401).json({ error: "unauthorized" });
+    const net = fc.normNet(b.network);
 
-    const result = await fc.withLock(`dep:${b.address}`, async () => {
+    const result = await fc.withLock(`dep:${net}:${b.address}`, async () => {
     const web3 = fc.web3();
-    const conn = new web3.Connection(fc.cfg().RPC, "confirmed");
+    const conn = new web3.Connection(fc.rpcFor(net), "confirmed");
     const treasury = fc.treasuryKeypair();
-    const depositKp = fc.depositKeypair(b.address);
+    const depositKp = fc.depositKeypair(net, b.address);
 
     const lamports = await conn.getBalance(depositKp.publicKey, "confirmed");
     const minLamports = Math.floor(fc.ECON.MIN_DEPOSIT * fc.ECON.LAMPORTS);
     if (lamports < minLamports) {
-      const a = await fc.getAccount(b.address);
+      const a = await fc.getAccount(net, b.address);
       return { http: 200, payload: { ok: true, credited: 0, balance: a.balance, found: lamports / fc.ECON.LAMPORTS } };
     }
 
@@ -42,7 +43,7 @@ module.exports = async (req, res) => {
     const sig = await web3.sendAndConfirmTransaction(conn, tx, [treasury, depositKp], { commitment: "confirmed" });
 
     const credited = lamports / fc.ECON.LAMPORTS;
-    const a = await fc.getAccount(b.address);
+    const a = await fc.getAccount(net, b.address);
     a.balance = fc.round9(a.balance + credited);
     a.creditedLamports = (a.creditedLamports || 0) + lamports;
     await fc.putAccount(a);

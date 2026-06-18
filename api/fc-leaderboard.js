@@ -8,8 +8,9 @@ module.exports = async (req, res) => {
 
   try {
     const mode = (req.query && req.query.mode) === "wagered" ? "wagered" : "profit";
-    const rows = await fc.leaderboard(mode, 12);
-    return res.status(200).json({ ok: true, mode, rows });
+    const net = fc.normNet(req.query && req.query.network);
+    const rows = await fc.leaderboard(net, mode, 12);
+    return res.status(200).json({ ok: true, mode, network: net, rows });
   } catch (e) {
     return res.status(500).json({ ok: false, error: "leaderboard_failed", detail: String(e), rows: [] });
   }

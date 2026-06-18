@@ -7,7 +7,8 @@ module.exports = async (req, res) => {
   const c = fc.cfg();
   return res.status(200).json({
     configured: c.configured,
-    network: c.RPC.includes("devnet") ? "devnet" : "mainnet",
+    networks: fc.NETWORKS,
+    defaultNetwork: "devnet",
     econ: {
       mainMult: fc.ECON.MAIN_MULT, zoneMult: fc.ECON.ZONE_MULT,
       minBet: fc.ECON.MIN_BET, maxBet: fc.ECON.MAX_BET,

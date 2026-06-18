@@ -11,15 +11,16 @@ module.exports = async (req, res) => {
   try {
     const b = fc.body(req);
     if (!fc.authed(b)) return res.status(401).json({ error: "unauthorized" });
+    const net = fc.normNet(b.network);
 
-    const result = await fc.withLock(`bet:${b.address}`, async () => {
-      const a = await fc.getAccount(b.address);
+    const result = await fc.withLock(`bet:${net}:${b.address}`, async () => {
+      const a = await fc.getAccount(net, b.address);
       const r = fc.settle(a, { side: b.side, stake: b.stake, zone: b.zone, zoneStake: b.zoneStake });
       if (r.error) return { http: 400, payload: { ok: false, error: r.error, balance: a.balance } };
       await fc.putAccount(a);
       try {
-        await fc.kv().lpush(fc.histKey(a.address), JSON.stringify(r.record));
-        await fc.kv().ltrim(fc.histKey(a.address), 0, 99);
+        await fc.kv().lpush(fc.histKey(net, a.address), JSON.stringify(r.record));
+        await fc.kv().ltrim(fc.histKey(net, a.address), 0, 99);
         await fc.bumpLeaderboard(a);
       } catch (_) {}
       return { http: 200, payload: { ok: true, outcome: r.outcome, land: r.land, net: r.net, win: r.win, zoneWin: r.zoneWin, record: r.record, account: fc.publicAccount(a, null) } };

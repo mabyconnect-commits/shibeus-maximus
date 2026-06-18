@@ -11,8 +11,8 @@ module.exports = async (req, res) => {
   try {
     const b = fc.body(req);
     if (!fc.isAddress(b.address)) return res.status(400).json({ error: "bad_address" });
-    const { nonce, message } = await fc.issueChallenge(b.address);
-    return res.status(200).json({ ok: true, nonce, message });
+    const { nonce, message } = await fc.issueChallenge(b.network, b.address);
+    return res.status(200).json({ ok: true, nonce, message, network: fc.normNet(b.network) });
   } catch (e) {
     return res.status(500).json({ error: "challenge_failed", detail: String(e) });
   }

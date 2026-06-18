@@ -12,6 +12,7 @@ module.exports = async (req, res) => {
   try {
     const b = fc.body(req);
     if (!fc.authed(b)) return res.status(401).json({ error: "unauthorized" });
+    const net = fc.normNet(b.network);
 
     const destination = String(b.destination || b.address).trim();
     if (!fc.isAddress(destination)) return res.status(400).json({ ok: false, error: "bad_destination" });
@@ -20,8 +21,8 @@ module.exports = async (req, res) => {
     if (!(amount >= fc.ECON.MIN_WITHDRAW)) return res.status(400).json({ ok: false, error: "below_min", min: fc.ECON.MIN_WITHDRAW });
 
     // Lock the account so concurrent withdrawals can't double-spend the balance.
-    const lock = await fc.withLock(`wd:${b.address}`, async () => {
-    const a = await fc.getAccount(b.address);
+    const lock = await fc.withLock(`wd:${net}:${b.address}`, async () => {
+    const a = await fc.getAccount(net, b.address);
     if (amount > a.balance + 1e-9) return { http: 400, payload: { ok: false, error: "insufficient", balance: a.balance } };
 
     // Debit first to prevent double-spend; refund on send failure.
@@ -38,7 +39,7 @@ module.exports = async (req, res) => {
 
     try {
       const web3 = fc.web3();
-      const conn = new web3.Connection(fc.cfg().RPC, "confirmed");
+      const conn = new web3.Connection(fc.rpcFor(net), "confirmed");
       const treasury = fc.treasuryKeypair();
       const tx = new web3.Transaction().add(
         web3.SystemProgram.transfer({
@@ -54,7 +55,7 @@ module.exports = async (req, res) => {
       return { http: 200, payload: { ok: true, amount, signature: sig, balance: a.balance } };
     } catch (sendErr) {
       // refund the debit
-      const a2 = await fc.getAccount(b.address);
+      const a2 = await fc.getAccount(net, b.address);
       a2.balance = fc.round9(a2.balance + amount);
       await fc.putAccount(a2);
       return { http: 502, payload: { ok: false, error: "send_failed", refunded: true, balance: a2.balance, detail: String(sendErr) } };

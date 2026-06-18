@@ -317,6 +317,13 @@
 .mode-pill { font-family: var(--font-display); font-weight: 700; font-size: 0.62rem; letter-spacing: 0.08em; padding: 0.25rem 0.6rem; border-radius: 999px; border: 1px solid var(--line); }
 .mode-pill.beta { color: var(--gold); background: rgba(232, 192, 105, 0.1); }
 .mode-pill.live { color: var(--goal-green); background: rgba(182, 255, 46, 0.14); border-color: rgba(182, 255, 46, 0.4); }
+.mode-pill.live.mainnet { color: #ff8a90; background: rgba(255, 59, 70, 0.14); border-color: rgba(255, 59, 70, 0.45); }
+
+/* network toggle */
+.net-toggle { display: inline-flex; gap: 4px; border: 1px solid var(--line); border-radius: 999px; padding: 4px; margin-top: 10px; }
+.net-toggle button { border: 0; background: none; color: var(--muted); font-family: var(--font-display); font-weight: 700; font-size: 0.72rem; padding: 0.32rem 0.8rem; border-radius: 999px; cursor: pointer; transition: 0.15s; }
+.net-toggle button.on[data-net="devnet"] { background: rgba(182, 255, 46, 0.18); color: var(--goal-green); }
+.net-toggle button.on[data-net="mainnet"] { background: rgba(255, 59, 70, 0.18); color: #ff8a90; }
 
 /* live deposit block */
 .real-qr { width: 120px; height: 120px; border-radius: 10px; background: #fff; display: grid; place-items: center; flex: 0 0 auto; }

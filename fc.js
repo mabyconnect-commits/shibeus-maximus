@@ -33,7 +33,7 @@
 
   /* ---- Elements ------------------------------------------ */
   const el = {};
-  ["connectCard","connectBtn","connectMsg","walletCard","walletHandle","accountBtn","creditBal","modePill",
+  ["connectCard","connectBtn","connectMsg","walletCard","walletHandle","accountBtn","creditBal","modePill","netToggle",
    "sideGoal","sideMiss","sentGoal","sentMiss","betInput","zoneInput","zonebet","zbSwitch","zbPick","zones",
    "totalBet","toWin","kickBtn","betMsg","stShots","stWinRate","stStreak","stWagered","stPnl","stBest","feed",
    "keeper","ball","flash","flashText","flashSub","howBtn","lbBtn","obBack","accBack","lbBack","proofBack",
@@ -64,6 +64,8 @@
      ============================================================ */
   const API = {
     live: false, token: null, deposit: null,
+    network: localStorage.getItem("shibeusfc:network") || "devnet",
+    setNetwork(n) { this.network = n === "mainnet" ? "mainnet" : "devnet"; localStorage.setItem("shibeusfc:network", this.network); },
     async detect() {
       try { const r = await fetch("/api/fc-config"); const d = await r.json(); this.live = !!d.configured; }
       catch (_) { this.live = false; }
@@ -72,7 +74,7 @@
     async post(path, extra) {
       const r = await fetch(path, {
         method: "POST", headers: { "content-type": "application/json" },
-        body: JSON.stringify({ address, token: this.token, ...extra }),
+        body: JSON.stringify({ address, token: this.token, network: this.network, ...extra }),
       });
       return r.json();
     },
@@ -191,15 +193,36 @@
   }
 
   function setMode() {
-    el.modePill.textContent = API.live ? "LIVE · SOL" : "BETA credits";
-    el.modePill.className = "mode-pill " + (API.live ? "live" : "beta");
+    const net = API.network === "mainnet" ? "MAINNET" : "DEVNET";
+    el.modePill.textContent = API.live ? "LIVE · " + net : "BETA credits";
+    el.modePill.className = "mode-pill " + (API.live ? (API.network === "mainnet" ? "live mainnet" : "live") : "beta");
+    // network toggle visible only in live mode
+    el.netToggle.hidden = !API.live;
+    $$("#netToggle button").forEach((b) => b.classList.toggle("on", b.dataset.net === API.network));
     // deposit pane: live shows the real address; beta shows the lock + grant
     el.depLive.hidden = !API.live;
     el.depBeta.hidden = API.live;
     if (API.live && API.deposit) { el.depAddr.textContent = API.deposit; drawQR(el.qrLive, API.deposit); }
     el.wdNote.textContent = API.live
-      ? "Sends real SOL from the treasury to your wallet. Amounts over the auto limit go to a manual review queue; failed sends are refunded."
+      ? (API.network === "mainnet"
+          ? "Sends REAL mainnet SOL from the treasury to your wallet. Amounts over the auto limit go to a manual review queue; failed sends are refunded."
+          : "Sends devnet (test) SOL from the treasury to your wallet. Failed sends are refunded.")
       : "Withdrawals send real SOL at launch. Large amounts go to a manual review queue; failed sends are refunded automatically.";
+  }
+
+  // switch network without re-signing: the session token is identity-only, so we
+  // just re-fetch the account/deposit address for the chosen network.
+  async function switchNetwork(net) {
+    if (!API.live || net === API.network || busy) return;
+    if (net === "mainnet" && !confirm("Switch to MAINNET? Bets and withdrawals here use REAL SOL.")) return;
+    API.setNetwork(net);
+    const d = await API.post("/api/fc-account", {});
+    if (!d.ok) { API.setNetwork(net === "mainnet" ? "devnet" : "mainnet"); flashMsg("Couldn't switch network — try again.", "err"); return; }
+    API.deposit = d.account.depositAddress;
+    state.history = []; state.recent = [];
+    applyAccount(d.account);
+    setMode(); renderAll();
+    flashMsg("Switched to " + (net === "mainnet" ? "Mainnet (real SOL)" : "Devnet (test SOL)") + ".", "ok");
   }
 
   function logout() {
@@ -477,7 +500,7 @@
   async function renderLeaderboard() {
     if (API.live) {
       try {
-        const d = await (await fetch("/api/fc-leaderboard?mode=" + lbMode)).json();
+        const d = await (await fetch("/api/fc-leaderboard?mode=" + lbMode + "&network=" + API.network)).json();
         if (d.ok && d.rows && d.rows.length) {
           return drawLB(d.rows.map((r) => ({ ...r, me: state && (r.h === (state.handle || short(address))) })));
         }
@@ -550,6 +573,7 @@
      WIRE UP
      ============================================================ */
   el.connectBtn.addEventListener("click", () => connect(false));
+  $$("#netToggle button").forEach((b) => b.addEventListener("click", () => switchNetwork(b.dataset.net)));
   el.sideGoal.addEventListener("click", () => selectSide("goal"));
   el.sideMiss.addEventListener("click", () => selectSide("miss"));
   el.zbSwitch.addEventListener("click", () => toggleZone());

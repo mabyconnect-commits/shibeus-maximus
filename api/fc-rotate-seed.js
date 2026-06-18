@@ -14,7 +14,8 @@ module.exports = async (req, res) => {
     if (!fc.authed(b)) return res.status(401).json({ error: "unauthorized" });
     const crypto = require("crypto");
 
-    const a = await fc.getAccount(b.address);
+    const net = fc.normNet(b.network);
+    const a = await fc.getAccount(net, b.address);
     const revealedSeed = a.server, revealedHash = a.hash, revealedNonce = a.nonce;
     a.server = crypto.randomBytes(32).toString("hex");
     a.hash = fc.sha256Hex(a.server);

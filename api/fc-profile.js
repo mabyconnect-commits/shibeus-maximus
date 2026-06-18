@@ -14,7 +14,8 @@ module.exports = async (req, res) => {
     const handle = String(b.handle || "").trim();
     if (!/^[A-Za-z0-9_]{3,20}$/.test(handle)) return res.status(400).json({ ok: false, error: "bad_handle" });
 
-    const a = await fc.getAccount(b.address);
+    const net = fc.normNet(b.network);
+    const a = await fc.getAccount(net, b.address);
     a.handle = handle;
     await fc.putAccount(a);
     try { await fc.bumpLeaderboard(a); } catch (_) {}
