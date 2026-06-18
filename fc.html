@@ -122,7 +122,7 @@
         <div class="card connect-card" id="connectCard">
           <h3 style="justify-content:center"><span class="ttl">👻 Connect Wallet</span></h3>
           <p>Connect Phantom to enter the arena. It's a read-only sign-in — your keys never leave your wallet.</p>
-          <button class="btn btn--gold" id="connectBtn" style="width:100%;justify-content:center">Connect Phantom</button>
+          <button class="btn btn--lime" id="connectBtn" style="width:100%;justify-content:center">Connect Phantom</button>
           <p class="bet-msg" id="connectMsg"></p>
         </div>
 
@@ -130,7 +130,10 @@
         <div class="card" id="walletCard" hidden>
           <div class="wallet-row">
             <span class="wallet-id"><i class="av"></i><span id="walletHandle">—</span></span>
-            <button class="btn btn--ghost btn--sm" id="accountBtn">Account</button>
+            <span style="display:flex;gap:8px;align-items:center">
+              <span class="mode-pill beta" id="modePill">BETA credits</span>
+              <button class="btn btn--ghost btn--sm" id="accountBtn">Account</button>
+            </span>
           </div>
           <div class="bal-big"><span id="creditBal">0.000</span> <small>◎ balance</small></div>
         </div>
@@ -183,7 +186,7 @@
             <div class="ro to-win"><span>To win</span><b id="toWin">0.198 ◎</b></div>
           </div>
 
-          <button class="btn btn--gold kick-btn" id="kickBtn">⚽ Take the Penalty</button>
+          <button class="btn btn--lime kick-btn" id="kickBtn">⚽ Take the Penalty</button>
           <p class="bet-msg" id="betMsg"></p>
         </div>
 
@@ -231,7 +234,7 @@
         </div>
         <h3>⚽ Goal or Miss?</h3>
         <p>Every round is a penalty kick. Bet <span class="hl-goal">GOAL</span> if you think it scores, or <span class="hl-miss">MISS</span> if the keeper saves it or it goes wide. Set your stake and strike the ball — winners pay <b>×1.98</b>.</p>
-        <button class="btn btn--gold" id="obNext" style="width:100%;justify-content:center">NEXT →</button>
+        <button class="btn btn--lime" id="obNext" style="width:100%;justify-content:center">NEXT →</button>
       </div>
 
       <div class="ob-slide" data-slide="1">
@@ -247,7 +250,7 @@
         </div>
         <h3>🎯 Call Your Corner</h3>
         <p>On a GOAL pick you can add an optional <span class="hl-zone">ZONE</span> bet: predict the exact corner the ball lands in for a much bigger payout (up to <span class="hl-zone">×9.90</span>). It's a separate stake riding on the same shot.</p>
-        <button class="btn btn--gold" id="obNext2" style="width:100%;justify-content:center">NEXT →</button>
+        <button class="btn btn--lime" id="obNext2" style="width:100%;justify-content:center">NEXT →</button>
       </div>
 
       <div class="ob-slide" data-slide="2">
@@ -259,7 +262,7 @@
         </div>
         <h3>🏛️ Free in BETA</h3>
         <p>You're connected and playing on <b>free arena credits</b> with a real provably-fair engine — every outcome is committed before you see it and verifiable. On-chain SOL deposits, withdrawals and payouts switch on at official launch.</p>
-        <button class="btn btn--gold" id="obDone" style="width:100%;justify-content:center">LET'S PLAY ⚽</button>
+        <button class="btn btn--lime" id="obDone" style="width:100%;justify-content:center">LET'S PLAY ⚽</button>
       </div>
     </div>
   </div>
@@ -293,18 +296,38 @@
 
       <!-- deposit -->
       <div class="tabpane" id="panedeposit">
-        <div class="acc-box" style="display:flex;gap:14px;align-items:center">
-          <div class="fake-qr">
-            <svg viewBox="0 0 29 29" xmlns="http://www.w3.org/2000/svg" shape-rendering="crispEdges" id="qrSvg"></svg>
-            <div class="lockchip">🔒 Deposits open<br/>at launch</div>
+        <!-- LIVE: real per-user deposit address -->
+        <div id="depLive" hidden>
+          <div class="acc-box" style="display:flex;gap:14px;align-items:center">
+            <div class="real-qr"><svg viewBox="0 0 29 29" xmlns="http://www.w3.org/2000/svg" shape-rendering="crispEdges" id="qrLive"></svg></div>
+            <div style="min-width:0">
+              <div class="lbl2">Your deposit address</div>
+              <p class="addr-mono" id="depAddr">—</p>
+              <button class="btn btn--ghost btn--sm" id="copyDep">⧉ Copy</button>
+            </div>
           </div>
-          <div>
-            <div class="lbl2">Your deposit address</div>
-            <p class="muted" style="font-size:0.8rem;word-break:break-all">Assigned at launch — a unique Solana address that credits your balance automatically.</p>
-          </div>
+          <ul class="dep-notes">
+            <li>✓ Works from any wallet or exchange — the address identifies you.</li>
+            <li>✓ No memo or tag required.</li>
+            <li>⚠ Native SOL only · minimum 0.01 ◎.</li>
+          </ul>
+          <button class="btn btn--lime" id="checkDepBtn" style="width:100%;justify-content:center">⟳ Already sent? Check now</button>
         </div>
-        <div class="lock-note">🏛️ On-chain SOL deposits activate at official launch (native SOL, min 0.01 ◎). For now, claim free arena credits below to play the full game.</div>
-        <button class="btn btn--gold" id="grantBtn" style="width:100%;justify-content:center">🎁 Claim 1.000 ◎ demo credits</button>
+        <!-- BETA: locked, free credits -->
+        <div id="depBeta">
+          <div class="acc-box" style="display:flex;gap:14px;align-items:center">
+            <div class="fake-qr">
+              <svg viewBox="0 0 29 29" xmlns="http://www.w3.org/2000/svg" shape-rendering="crispEdges" id="qrSvg"></svg>
+              <div class="lockchip">🔒 Deposits open<br/>at launch</div>
+            </div>
+            <div>
+              <div class="lbl2">Your deposit address</div>
+              <p class="muted" style="font-size:0.8rem;word-break:break-all">Assigned at launch — a unique Solana address that credits your balance automatically.</p>
+            </div>
+          </div>
+          <div class="lock-note">🏛️ On-chain SOL deposits activate at official launch (native SOL, min 0.01 ◎). For now, claim free arena credits below to play the full game.</div>
+          <button class="btn btn--lime" id="grantBtn" style="width:100%;justify-content:center">🎁 Claim 1.000 ◎ demo credits</button>
+        </div>
         <p class="bet-msg" id="depositMsg"></p>
       </div>
 
@@ -314,8 +337,8 @@
         <input class="field" id="wdDest" placeholder="Connected wallet" />
         <p class="lbl2" style="margin:1rem 0 0.4rem">Amount (SOL) — min 0.005</p>
         <input class="field" id="wdAmount" type="number" step="0.01" value="0.50" />
-        <button class="btn btn--gold" id="wdBtn" style="width:100%;justify-content:center;margin-top:1rem">Request withdrawal</button>
-        <div class="lock-note" style="margin-top:0.9rem">Withdrawals send real SOL at launch. Large amounts go to a manual review queue; failed sends are refunded automatically.</div>
+        <button class="btn btn--lime" id="wdBtn" style="width:100%;justify-content:center;margin-top:1rem">Request withdrawal</button>
+        <div class="lock-note" id="wdNote" style="margin-top:0.9rem">Withdrawals send real SOL at launch. Large amounts go to a manual review queue; failed sends are refunded automatically.</div>
         <p class="bet-msg" id="withdrawMsg"></p>
       </div>
     </div>

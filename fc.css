@@ -297,3 +297,30 @@
 .proof-row { display: flex; justify-content: space-between; gap: 12px; padding: 0.5rem 0; border-bottom: 1px dashed var(--line); font-size: 0.86rem; }
 .proof-row:last-child { border-bottom: 0; }
 .proof-row code { font-family: ui-monospace, Menlo, monospace; color: var(--ink-soft); word-break: break-all; font-size: 0.76rem; text-align: right; }
+
+/* ============================================================
+   degenfc-style tuning: lime CTAs on a navy pitch
+   ============================================================ */
+.fc-page { position: relative; }
+.fc-page::before {
+  content: ""; position: fixed; inset: 0; z-index: -1; pointer-events: none;
+  background:
+    radial-gradient(70% 45% at 50% -8%, rgba(150, 230, 0, 0.10), transparent 60%),
+    radial-gradient(60% 50% at 50% 110%, rgba(20, 60, 40, 0.4), transparent 60%),
+    linear-gradient(180deg, rgba(8, 14, 24, 0.55), rgba(6, 10, 16, 0.75));
+}
+
+.btn--lime { background: linear-gradient(180deg, #c6ff4d, #9ee600 45%, #7bc400); color: #16210a; border-color: transparent; }
+.btn--lime:hover { transform: translateY(-2px); box-shadow: 0 14px 34px -8px rgba(150, 230, 0, 0.55); }
+.btn--lime:disabled { opacity: 0.5; cursor: not-allowed; transform: none; box-shadow: none; }
+
+.mode-pill { font-family: var(--font-display); font-weight: 700; font-size: 0.62rem; letter-spacing: 0.08em; padding: 0.25rem 0.6rem; border-radius: 999px; border: 1px solid var(--line); }
+.mode-pill.beta { color: var(--gold); background: rgba(232, 192, 105, 0.1); }
+.mode-pill.live { color: var(--goal-green); background: rgba(182, 255, 46, 0.14); border-color: rgba(182, 255, 46, 0.4); }
+
+/* live deposit block */
+.real-qr { width: 120px; height: 120px; border-radius: 10px; background: #fff; display: grid; place-items: center; flex: 0 0 auto; }
+.real-qr svg { width: 106px; height: 106px; }
+.addr-mono { font-family: ui-monospace, Menlo, monospace; font-size: 0.82rem; word-break: break-all; color: var(--ink); margin: 0.3rem 0 0.6rem; }
+.dep-notes { list-style: none; padding: 0; margin: 0.9rem 0; display: grid; gap: 0.4rem; font-size: 0.84rem; color: var(--ink-soft); }
+.dep-notes li { line-height: 1.4; }
