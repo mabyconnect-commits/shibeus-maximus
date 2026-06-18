@@ -1,0 +1,5 @@
+{
+  "rewrites": [
+    { "source": "/api/fc-:action([a-z-]+)", "destination": "/api/fc/:action" }
+  ]
+}
