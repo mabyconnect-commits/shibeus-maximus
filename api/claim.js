@@ -43,7 +43,7 @@ module.exports = async (req, res) => {
     // ---- on-chain transfer ----
     const web3 = require("@solana/web3.js");
     const splToken = require("@solana/spl-token");
-    const bs58 = require("bs58");
+    const _bs58 = require("bs58"); const bs58 = _bs58 && _bs58.default ? _bs58.default : _bs58;
 
     const conn = new web3.Connection(RPC, "confirmed");
     const treasury = web3.Keypair.fromSecretKey(bs58.decode(process.env.TREASURY_SECRET));
